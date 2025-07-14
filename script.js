@@ -8,6 +8,10 @@ const quizBox = document.querySelector('.quiz-box');
 const resultBox = document.querySelector('.result-box');
 const tryAgainBtn = document.querySelector('.tryAgain-btn');
 const goHomeBtn = document.querySelector('.goHome-btn');
+let counter;
+let timeValue = 15;
+const timeCount = document.querySelector(".time-count");
+
 
 startBtn.onclick = () =>{
     popupInfo.classList.add('active');
@@ -28,6 +32,8 @@ continueBtn.onclick = () => {
     showQuestions(0);
     questionCounter(1);
     headerScore();
+    startTimer(timeValue);
+
 }
 
 tryAgainBtn.onclick = () => {
@@ -42,6 +48,8 @@ tryAgainBtn.onclick = () => {
     questionCounter(questionNumb);
 
     headerScore();
+    startTimer(timeValue);
+
 
 }
 goHomeBtn.onclick = () => {
@@ -75,6 +83,8 @@ nextBtn.onclick = () => {
     else{
         showResultBox();
     }
+    startTimer(timeValue);
+
 }
 
 const optionList = document.querySelector('.option-list');
@@ -101,6 +111,8 @@ function optionSelected(answer){
     let userAnswer = answer.textContent;
     let correctAnswer = questions[questionCount].answer;
     let allOptions = optionList.children.length;
+    clearInterval(counter);
+
 
     if(userAnswer == correctAnswer){
         console.log("correct");
@@ -133,7 +145,7 @@ function questionCounter(index){
 
 function headerScore(){
     const headerScoreText = document.querySelector('.header-score');
-    headerScoreText.textContent = `Score: ${userScore} / 5`;
+    headerScoreText.textContent = `Score: ${userScore} / 10`;
 }
 
 function showResultBox(){
@@ -157,4 +169,27 @@ function showResultBox(){
             clearInterval(progress);
         }
     }, speed);
+}
+
+    function startTimer(time) {
+  clearInterval(counter); // clear previous
+  counter = setInterval(() => {
+    timeCount.textContent = time;
+    time--;
+    if (time < 0) {
+      clearInterval(counter);
+      autoSelectCorrect(); // reveal correct answer
+      nextBtn.classList.add("active");
+    }
+  }, 1000)
+}
+function autoSelectCorrect() {
+  let correctAnswer = questions[questionCount].answer;
+  let allOptions = optionList.children.length;
+  for (let i = 0; i < allOptions; i++) {
+    if (optionList.children[i].textContent == correctAnswer) {
+      optionList.children[i].classList.add("correct");
+    }
+    optionList.children[i].classList.add("disabled");
+  }
 }
